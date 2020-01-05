@@ -1,6 +1,7 @@
 import { pbkdf2 } from "crypto";
 import { User, createUser, findUser } from "../db/models/users";
 import { config } from "../shared/config";
+import * as jwt from 'jsonwebtoken';
 
 const salt = config('HASH_SALT');
 
@@ -25,5 +26,7 @@ export const signInUser = async (user: User) => {
     throw new Error('email/password is incorrect');
   }
 
-  return foundUser;
+  const token = jwt.sign(foundUser, config('JWT_SECRET'));
+
+  return token;
 }
