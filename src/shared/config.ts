@@ -6,6 +6,16 @@ if (process.env.DOTENV) {
 }
 
 const definitions = {
+  HASH_SALT: {
+    env: "HASH_SALT",
+    format: 'String',
+    default: 'SALT',
+  },
+  JWT_SECRET: {
+    env: "JWT_SECRET",
+    format: "String",
+    default: 'SECRET',
+  },
   DB_URL: {
     env: 'DB_ENV',
     format: 'String',

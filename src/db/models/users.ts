@@ -1,19 +1,25 @@
 import { connection } from '../connection';
 import { Db } from 'mongodb';
 
-export function createUserRepository(dbConnection: Promise<Db>) {
-
+export interface User {
+  email: string;
+  password: string;
 }
 
-export async function getAllUsers() {
-  const db = await connection;
+const fromUsersCollection = (db: Db) => db.collection('users')
 
-  return db.collection('users').find().toArray();
-}
+export const getAllUsers = () =>
+  connection
+    .then(fromUsersCollection)
+    .then(users => users.find<User>())
+    .then(users => users.toArray())
 
-export async function createUser(name, surname) {
-  const db = await connection;
+export const createUser = (user: any) =>
+  connection
+    .then(fromUsersCollection)
+    .then(users => users.insertOne(user))
 
-  return db.collection('users')
-    .insertOne({ name, surname })
-}
+export const findUser = (email: string) =>
+  connection
+    .then(fromUsersCollection)
+    .then(users => users.findOne<User>({ email }))

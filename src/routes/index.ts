@@ -1,7 +1,23 @@
 import { Router } from 'express'
-import { getAllUsers, createUser } from '../db/models/users';
+import { getAllUsers } from '../db/models/users';
+import { signInUser, signUpUser } from "../services/users";
+import * as jwt from 'jsonwebtoken';
+import { config } from '../shared/config';
 
 export const router = Router();
+
+router.post('/sign-in', (req, res) => {
+  signInUser(req.body)
+    .then(user => jwt.sign(user.password, config('JWT_SECRET')))
+    .then(token => res.json({ token }))
+    .catch(err => res.json({ error: err.message }))
+})
+
+router.post('/sign-up', (req, res) => {
+  signUpUser(req.body)
+    .then(() => res.sendStatus(200))
+    .catch(err => res.json({ error: err.msg }))
+})
 
 router.get('/users', (req, res) => {
   getAllUsers()
@@ -9,12 +25,4 @@ router.get('/users', (req, res) => {
       res.json(users)
     })
     .catch(err => res.json({ error: err.msg }));
-})
-
-router.post('/users', (req, res) => {
-  const { name, surname } = req.body;
-
-  createUser(name, surname)
-    .then(() => res.sendStatus(200))
-    .catch(err => res.json({ error: err.msg }))
 })
