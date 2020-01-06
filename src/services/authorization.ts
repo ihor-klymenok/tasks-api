@@ -2,6 +2,7 @@ import { pbkdf2 } from 'crypto'
 import * as jwt from 'jsonwebtoken'
 import { User, createUser, findUser } from '../db/models/users'
 import { config } from '../shared/config'
+import { AuthenticationError } from '../shared/errors'
 
 const salt = config('HASH_SALT')
 
@@ -22,7 +23,7 @@ export const signInUser = async (user: User) => {
   ])
 
   if (!foundUser || password !== foundUser.password) {
-    throw new Error('email/password is incorrect')
+    throw new AuthenticationError('email/password is incorrect')
   }
 
   const token = jwt.sign(foundUser, config('JWT_SECRET'))
