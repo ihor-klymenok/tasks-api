@@ -13,21 +13,17 @@ const getAllTasks = (req: Request, res: Response) => {
     size: Number(req.query.size) || 10,
   }
 
-  let order: [keyof tasks.Task, 1 | -1] = ['priority', 1]
-  if (req.query.sortBy) {
-    order = [req.query.sortBy, 1]
-  }
-  if (req.query.orderBy) {
-    order = [order[0], req.query.orderBy]
+  const sort = {
+    field: req.query.sortBy as keyof tasks.Task || '_id',
+    order: Number(req.query.orderBy) || 1,
   }
 
-  tasks.findAll(filters, pagination)
+  tasks.findAll(filters, pagination, sort)
     .then(([tasks, count]) => buildPaginatedResponse(
       { tasks },
       { ...pagination, count }
     ))
     .then(tasks => res.json(tasks))
-    .catch(err => res.json({ error: err.messsage }))
 }
 
 const getTask = (req: Request, res: Response) => {

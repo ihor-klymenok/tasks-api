@@ -29,15 +29,15 @@ export const findOne = (id: string) =>
 export const findAll = (
   filters: Pick<Task, 'userId'>,
   pagination: { page: number, size: number } = { page: 0, size: 10 },
-  order?: [keyof Task, 1 | -1]
+  sort?: { field: keyof Task, order: number }
 ) => {
   let options: Pick<FindOneOptions, 'limit' | 'skip' | 'sort'> = {
     limit: pagination.size,
     skip: pagination.page * pagination.size,
   }
 
-  if (order) {
-    options = { ...options, sort: order }
+  if (sort) {
+    options = { ...options, sort: { [sort.field]: sort.order } }
   }
 
   return connection
