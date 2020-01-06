@@ -1,5 +1,6 @@
 import { Db } from 'mongodb'
-import { connection } from '../connection'
+import { connection } from '../../connection'
+import { validateUser } from './schema'
 
 export interface User {
   email: string
@@ -8,12 +9,8 @@ export interface User {
 
 const fromUsersCollection = (db: Db) => db.collection('users')
 
-export const getAllUsers = () => connection
-  .then(fromUsersCollection)
-  .then(users => users.find<User>())
-  .then(users => users.toArray())
-
-export const createUser = (user: any) => connection
+export const createUser = (user: any) => validateUser(user)
+  .then(() => connection)
   .then(fromUsersCollection)
   .then(users => users.insertOne(user))
 

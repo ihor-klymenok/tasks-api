@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express'
 import { authorize } from '../middlewares/authentication'
-import * as tasks from '../db/models/tasks'
+import * as tasks from '../db/models/tasks/repository'
 import { buildPaginatedResponse } from '../services/pagination'
 
 const getAllTasks = (req: Request, res: Response, next: NextFunction) => {

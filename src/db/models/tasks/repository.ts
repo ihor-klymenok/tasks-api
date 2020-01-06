@@ -1,5 +1,6 @@
 import { Db, ObjectId, FindOneOptions } from 'mongodb'
-import { connection } from '../connection'
+import { connection } from '../../connection'
+import { validateTask } from './schema'
 
 export interface Task {
   _id: string
@@ -11,13 +12,14 @@ export interface Task {
 
 const fromTasksCollection = (db: Db) => db.collection('tasks')
 
-export const create = (task: Task) => connection
+export const create = (task: Task) => validateTask(task)
+  .then(() => connection)
   .then(fromTasksCollection)
   .then(tasks => tasks.insert(task))
 
 export const partialUpdate = (id: string, task: Partial<Task>) => connection
   .then(fromTasksCollection)
-  .then(tasks => tasks.findOneAndUpdate({ _id: new ObjectId(id) }, task))
+  .then(tasks => tasks.findOneAndUpdate({ _id: new ObjectId(id) }, { $set: task }))
 
 export const findOne = (id: string) => connection
   .then(fromTasksCollection)
