@@ -6,6 +6,11 @@ if (process.env.DOTENV) {
 }
 
 const definitions = {
+  HTTP_PORT: {
+    env: 'HTTP_PORT',
+    format: 'Number',
+    default: 3000,
+  },
   HASH_SALT: {
     env: 'HASH_SALT',
     format: 'String',
@@ -32,7 +37,7 @@ const schema = convict(definitions)
 
 schema.validate({ allowed: 'strict' })
 
-export const config = (name: keyof typeof definitions) => {
+export const config = (name: keyof typeof definitions): any => {
   if (schema.get(name) !== null) {
     return schema.get(name)
   }
