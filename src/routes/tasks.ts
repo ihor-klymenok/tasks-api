@@ -2,6 +2,7 @@ import { Router, Request, Response, NextFunction } from 'express'
 import { authorize } from '../middlewares/authentication'
 import * as tasks from '../db/models/tasks/repository'
 import { buildPaginatedResponse } from '../services/pagination'
+import { ValidationError } from '../shared/errors'
 
 const getAllTasks = (req: Request, res: Response, next: NextFunction) => {
   const filters = {
@@ -11,6 +12,10 @@ const getAllTasks = (req: Request, res: Response, next: NextFunction) => {
   const pagination = {
     page: Number(req.query.page) - 1 || 0,
     size: Number(req.query.size) || 10,
+  }
+
+  if (req.query.page && req.query.page < 1) {
+    throw new ValidationError('Page should be >= 1')
   }
 
   const sort = {
