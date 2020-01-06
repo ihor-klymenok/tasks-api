@@ -1,7 +1,7 @@
 import { Router, Request, Response, NextFunction } from 'express'
 import { authorize } from '../middlewares/authentication'
-import * as tasks from '../db/models/tasks';
-import { buildPaginatedResponse } from '../services/pagination';
+import * as tasks from '../db/models/tasks'
+import { buildPaginatedResponse } from '../services/pagination'
 
 const getAllTasks = (req: Request, res: Response, next: NextFunction) => {
   const filters = {
@@ -31,7 +31,7 @@ const getTask = (req: Request, res: Response, next: NextFunction) => {
 }
 
 const createTask = (req: Request, res: Response, next: NextFunction) => {
-  tasks.create({ ...req.body, userId: (<any>req).user._id})
+  tasks.create({ ...req.body, userId: (<any>req).user._id })
     .then(() => res.sendStatus(200))
     .catch(next)
 }

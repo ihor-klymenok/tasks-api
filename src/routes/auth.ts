@@ -1,5 +1,5 @@
 import { Router, Request, Response, NextFunction } from 'express'
-import * as authorization from '../services/authorization';
+import * as authorization from '../services/authorization'
 
 const signInUser = (req: Request, res: Response, next: NextFunction) => {
   authorization.signInUser(req.body)

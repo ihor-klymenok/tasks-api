@@ -1,5 +1,6 @@
-import { initializeServer } from "./server";
+import { initializeServer } from './server'
 
 initializeServer().listen(3000, () => {
-  console.log('Server is running on 3000 port');
+  // eslint-disable-next-line no-console
+  console.log('Server is running on 3000 port')
 })

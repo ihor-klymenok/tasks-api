@@ -1,15 +1,15 @@
 export type PaginatedResponse<T> = T & {
   pagination: {
-    page: number;
-    size: number;
-    pages: number;
-    total: number;
+    page: number
+    size: number
+    pages: number
+    total: number
   }
 }
 
 export const buildPaginatedResponse = <T> (
   data: T,
-  {page, size, count}: { page: number, size: number, count: number }
+  { page, size, count }: { page: number, size: number, count: number },
 ): PaginatedResponse<T> => {
   return {
     ...data,
@@ -18,6 +18,6 @@ export const buildPaginatedResponse = <T> (
       size,
       pages: Math.ceil(count / size),
       total: count,
-    }
+    },
   }
 }
