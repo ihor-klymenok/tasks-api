@@ -1,7 +1,8 @@
 import { connection } from '../connection'
-import { Db, ObjectId } from 'mongodb'
+import { Db, ObjectId, FindOneOptions, MongoCountPreferences } from 'mongodb'
 
 export interface Task {
+  _id: string;
   userId: string;
   title: string;
   dueDate: Date;
@@ -25,11 +26,31 @@ export const findOne = (id: string) =>
     .then(fromTasksCollection)
     .then(tasks => tasks.findOne({ _id: new ObjectId(id) }))
 
-export const findAll = (userId: string) =>
-  connection
+export const findAll = (
+  filters: Pick<Task, 'userId'>,
+  pagination: { page: number, size: number } = { page: 0, size: 10 },
+  order?: [keyof Task, 1 | -1]
+) => {
+  let options: Pick<FindOneOptions, 'limit' | 'skip' | 'sort'> = {
+    limit: pagination.size,
+    skip: pagination.page * pagination.size,
+  }
+
+  if (order) {
+    options = { ...options, sort: order }
+  }
+
+  return connection
     .then(fromTasksCollection)
-    .then(tasks => tasks.find({ userId }))
-    .then(tasks => tasks.toArray())
+    .then(tasks => Promise.all([
+      tasks.find<Task>(filters, options),
+      tasks.countDocuments(filters)
+    ]))
+    .then(tasksAndCount => Promise.all([
+      tasksAndCount[0].toArray(),
+      tasksAndCount[1]
+    ]))
+}
 
 export const deleteOne = (id: string) =>
   connection

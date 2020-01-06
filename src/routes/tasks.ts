@@ -1,10 +1,32 @@
 import { Router, Request, Response } from 'express'
 import { authorize } from '../middlewares/authentication'
 import * as tasks from '../db/models/tasks';
+import { buildPaginatedResponse } from '../services/pagination';
 
 const getAllTasks = (req: Request, res: Response) => {
-  tasks.findAll((<any> req).user._id)
-    .then(tasks => res.json({ tasks }))
+  const filters = {
+    userId: (<any>req).user._id,
+  }
+
+  const pagination = {
+    page: Number(req.query.page) - 1 || 0,
+    size: Number(req.query.size) || 10,
+  }
+
+  let order: [keyof tasks.Task, 1 | -1] = ['priority', 1]
+  if (req.query.sortBy) {
+    order = [req.query.sortBy, 1]
+  }
+  if (req.query.orderBy) {
+    order = [order[0], req.query.orderBy]
+  }
+
+  tasks.findAll(filters, pagination)
+    .then(([tasks, count]) => buildPaginatedResponse(
+      { tasks },
+      { ...pagination, count }
+    ))
+    .then(tasks => res.json(tasks))
     .catch(err => res.json({ error: err.messsage }))
 }
 
