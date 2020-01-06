@@ -1,16 +1,16 @@
-import { Router, Request, Response } from 'express'
+import { Router, Request, Response, NextFunction } from 'express'
 import * as authorization from '../services/authorization';
 
-const signInUser = (req: Request, res: Response) => {
+const signInUser = (req: Request, res: Response, next: NextFunction) => {
   authorization.signInUser(req.body)
     .then(token => res.json({ token }))
-    .catch(err => res.json({ error: err.message }))
+    .catch(next)
 }
 
-const signUpUser = (req: Request, res: Response) => {
+const signUpUser = (req: Request, res: Response, next: NextFunction) => {
   authorization.signUpUser(req.body)
     .then(() => res.sendStatus(200))
-    .catch(err => res.json({ error: err.msg }))
+    .catch(next)
 }
 
 export default Router()
