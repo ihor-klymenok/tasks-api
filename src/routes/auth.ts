@@ -9,7 +9,8 @@ const signInUser = (req: Request, res: Response, next: NextFunction) => {
 
 const signUpUser = (req: Request, res: Response, next: NextFunction) => {
   authorization.signUpUser(req.body)
-    .then(() => res.sendStatus(200))
+    .then(() => authorization.signInUser(req.body))
+    .then(token => res.json({ token }))
     .catch(next)
 }
 

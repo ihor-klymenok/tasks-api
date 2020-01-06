@@ -19,10 +19,7 @@ const getAllTasks = (req: Request, res: Response, next: NextFunction) => {
   }
 
   tasks.findAll(filters, pagination, sort)
-    .then(([tasks, count]) => buildPaginatedResponse(
-      { tasks },
-      { ...pagination, count }
-    ))
+    .then(([tasks, count]) => buildPaginatedResponse({ tasks }, { ...pagination, count }))
     .then(tasks => res.json(tasks))
     .catch(next)
 }
